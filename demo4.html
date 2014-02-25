@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<meta charset="GB18030">
+<head>
+<title>Router</title>
+<style>
+li {
+    margin:0;padding:0;
+    list-style:none
+}
+.sp {
+    padding-left: 10px;
+    color: #555;
+}
+.cl {
+    width: 300px;
+    float: left;
+}
+</style>
+</head>
+<body>
+<ul>
+<li><div class="cl"><a href="#/posts/120">#/posts/120</a></div><span class="sp">posts/:id</span></li>
+<li><div class="cl"><a href="#/download/user/images/hey.gif" class="cl">#/download/user/images/hey.gif</a></div><span class="sp">download/*path</span></li>
+<li><div class="cl"><a href="#/dashboard/graph" class="cl">#/dashboard/graph</a></div><span class="sp">:route/:action</span></li>
+<li><div class="cl"><a href="#testActions" class="cl">#testActions</a></div><span class="sp">*actions</span></li>
+<li><div class="cl"><a href="#/download/user" class="cl">#/download/user</a></div><span class="sp">匹配到download/*path 还是 :route/:action 呢?</span></li>
+</ul>
+
+<ul>
+<li><a href="#manual">#manual</a></li>
+<li><a href="#manualSilence">#manualSilence</a></li>
+<ul>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+<script>
+(function ($) {
+var AppRouter = Backbone.Router.extend({
+
+    routes: {
+        "posts/:id" : "getPost",
+        "download/*path": "downloadFile",  //对应的链接为<a href="#/download/user/images/hey.gif">download gif</a>
+        ":route/:action": "loadView",      //对应的链接为<a href="#/dashboard/graph">Load Route/Action View</a>
+        "manual" : "manual",               //手动切hash 捕获
+        "manualSilence" : "manualSilence", //手动切hash 捕获
+        "*actions" : "defaultRoute"
+    },
+
+    /*
+    routes: {
+        "posts/:id" : "getPost",
+        "*actions" : "defaultRoute"
+    },
+    */
+
+    getPost: function(id) {
+        alert(id);
+    },
+
+    defaultRoute : function(actions){
+        alert(actions);
+    },
+
+    downloadFile: function( path ){
+        alert(path); // user/images/hey.gif
+    },
+
+    loadView: function( route, action ){
+        alert(route + "_" + action); // dashboard_graph
+    },
+
+    manual: function() {
+        alert("手动切了hash");
+        app_router.navigate("/posts/" + 404, {trigger: true, replace: true});
+    },
+
+    manualSilence: function() {
+        alert("手动悄悄地切了hash");
+        app_router.navigate("/posts/" + 404, {trigger: false, replace: true});
+    },
+
+    //trigger表示触发事件，如果为false，则只是url变化，并不会触发事件，replace表示url替换，而不是前进到这个url，意味着启用该参数，浏览器的history不会记录这个变动。
+
+});
+
+var app_router = new AppRouter;
+Backbone.history.start();
+
+})(jQuery);
+</script>
+</html>
